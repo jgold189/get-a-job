@@ -1,3 +1,5 @@
+#Doesn't have properly built in waits for slow internet
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import random
@@ -48,7 +50,10 @@ class scraper:
                     job.click()
                     if "Indeed" not in driver.title:
                         raise Exception("Navigated off Indeed")
-                    fout.write(driver.find_element_by_id('vjs-desc').get_attribute('innerHTML'))
+                    #TODO: See how this replace works
+                    fout.write(driver.find_element_by_id('vjs-container').get_attribute('innerHTML').replace("|", "/"))
+                    #TODO: Make sure URL is there
+                    fout.write("<p class=\"URL\">" + driver.current_url + "</p>")
                     fout.write("|")
                     time.sleep(random.random())
             
@@ -60,6 +65,8 @@ class scraper:
                     if len(popupX) == 1:
                         popupX[0].click()
                         time.sleep(random.random())
+                    else:
+                        raise Exception("Too many X buttons")
                 else:
                     moreToScrape = False
 
@@ -78,8 +85,8 @@ if __name__ == "__main__":
     jobs = config[0].split(",")[1:]
     locations = config[1].split(",")[1:]
 
-    for job in jobs:
-        for location in locations:
-            scraper(job, location).scrape()
-            time.sleep(5 + random.random())
-    #scraper(jobs[0], locations[0]).scrape()
+    #for job in jobs:
+    #    for location in locations:
+    #        scraper(job, location).scrape()
+    #        time.sleep(5 + random.random())
+    scraper(jobs[0], locations[0]).scrape()
