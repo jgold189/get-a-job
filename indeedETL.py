@@ -1,7 +1,9 @@
 import sys
 from bs4 import BeautifulSoup
-from datetime import date
-import json
+from datetime import datetime
+import pymongo
+import bson
+import hashlib
 
 if __name__ == "__main__":
     #Open and read in the actual data scraped
@@ -14,7 +16,9 @@ if __name__ == "__main__":
     goodTags = fin.read().split(",")
     fin.close()
 
-    results = []
+    client = pymongo.MongoClient('localhost', 27017)
+    db = client.jobDB
+    jobs = db.jobs
 
     for item in data:
         #Make sure the item actually has data
@@ -28,11 +32,7 @@ if __name__ == "__main__":
             location = {}
             loc = soup.find("span", id="vjs-loc").getText().strip()[2:]
             location["city"], locState = loc.split(",")
-            if len(locState) > 3:
-                location["zip"] = locState[4:9]
-                location["state"] = locState[1:3]
-            else:
-                location["state"] = locState[1:3]
+            location["state"] = locState[1:3]
             temp["location"] = location
             temp["desc"] = soup.find("div", id="vjs-desc").getText()
             #If there is a dollar sign then there is a salary field so grab that
@@ -52,9 +52,16 @@ if __name__ == "__main__":
                 if tempDesc.find(goodTag) >= 0:
                     itemTag.append(goodTag)
             temp["tags"] = itemTag
-            temp["date"] = date.today().__str__()
+            temp["date"] = datetime.today()
             #The title is the hopefully unique key for every posting made up of the title, company, and location
-            title = (",".join([temp["jobTitle"], temp["companyName"], loc])).replace(" ", "")
-            results.append({title: temp})
-
-    print(json.dumps(results, sort_keys=True, indent=4))
+            idString = (",".join([temp["jobTitle"], temp["companyName"], loc])).replace(" ", "")
+            #Hash the title string with md5 (smallest digest since we need to truncate)
+            idHash = hashlib.md5(idString.encode())
+            #Truncate the hash into only 24 hex bytes and convert it to a bson and make that the _id (for duplicate prevention)
+            temp["_id"] = bson.ObjectId(idHash.hexdigest()[0:24])
+            #Try to insert the entry, if it fails thats because it is a duplicate (hopefully)
+            try:
+                newJob = jobs.insert_one(temp)
+                print(newJob.inserted_id)
+            except pymongo.errors.DuplicateKeyError as e:
+                print(e)
