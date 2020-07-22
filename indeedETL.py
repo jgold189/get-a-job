@@ -52,6 +52,7 @@ if __name__ == "__main__":
                 if tempDesc.find(goodTag) >= 0:
                     itemTag.append(goodTag)
             temp["tags"] = itemTag
+            temp["numTags"] = len(itemTag)
             temp["date"] = datetime.today()
             #The title is the hopefully unique key for every posting made up of the title, company, and location
             idString = (",".join([temp["jobTitle"], temp["companyName"], loc])).replace(" ", "")
@@ -65,3 +66,5 @@ if __name__ == "__main__":
                 print(newJob.inserted_id)
             except pymongo.errors.DuplicateKeyError as e:
                 print(e)
+    
+    client.close()
