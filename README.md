@@ -1,5 +1,4 @@
-# Job Finder Program
-# UNFINISHED
+# Job Finder Program |UNFINISHED|
 
 This program is designed to scrape job postings that would interest you from major job boards and aggregate them in an easy to order and sort centralized place. As I'm sure you could read in the title though this program was never fully finished. Hopefully one day I have the time to come back to this and work on it. Right now all that works (at the time of writing this) is the Indeed scraper and Indeed ETL operation to scrape data from Indeed and transform it into a NoSQL format, specifically MongoDB, but could be quickly changed to work with another NoSQL database.
 
