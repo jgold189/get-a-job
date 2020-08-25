@@ -1,6 +1,10 @@
 # Job Finder Program |UNFINISHED|
 
-This program is designed to scrape job postings that would interest you from major job boards and aggregate them in an easy to order and sort centralized place. As I'm sure you could read in the title though this program was never fully finished. Hopefully one day I have the time to come back to this and work on it. Right now all that works (at the time of writing this) is the Indeed scraper and Indeed ETL operation to scrape data from Indeed and transform it into a NoSQL format, specifically MongoDB, but could be quickly changed to work with another NoSQL database.
+This program is designed to scrape job postings that would interest you from major job boards and aggregate them in an easy to order and sort centralized place. As I'm sure you could read in the title though this program was never fully finished. Hopefully one day I have the time to come back to this and work on it. Right now all that works (at the time of writing this) is the Indeed scraper and Indeed ETL operation to scrape data from Indeed and transform it into a NoSQL format, specifically MongoDB, but could be quickly changed to work with another NoSQL database.  
+
+## Warnings
+Depending on how many job titles and location you put in (or if you change job posting times) you could be scraping an awful lot of data from Indeed who does not want you scraping data from their website. Since this uses Selenium it is a tiny bit harder to detect but not really in all honesty. If they notice you they could either IP ban you or ban your account. Don't use this if your at all concerned about that very real possibility.  
+Classic web scraper warning but if Indeed updates their website this scraper might entirely break.
 
 ## Setup
 Needs Selenium, BeautifulSoup4, and PyMongo to run.  
